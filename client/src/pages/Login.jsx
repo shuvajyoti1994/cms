@@ -1,13 +1,25 @@
 import React from 'react'
-import { Form, Input } from 'antd';
+import { Form, Input, message } from 'antd';
+import axios from 'axios';
 import '../styles/RegisterStyle.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const onFinishHandeler = (val) => {
-    console.log(val)
+  const onFinishHandeler = async(value) => {
+    try {
+      const res = await axios.post('/api/v1/user/login', value)
+      if(res.data.success) {
+        localStorage.setItem('Token', res.data.token)
+        message.success('Login Successfully')
+        navigation('/')
+      } else {
+        message.error(res.data.message)
+      }
+    } catch (error) {
+      error.message('Something went wrong')
+    }
 }
-
+const navigation = useNavigate();
   return (
     <>
       <div className="form-contener">
