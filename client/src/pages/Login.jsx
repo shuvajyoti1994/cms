@@ -3,11 +3,18 @@ import { Form, Input, message } from 'antd';
 import axios from 'axios';
 import '../styles/RegisterStyle.css'
 import { Link, useNavigate } from 'react-router-dom';
+// redux for loading
+import { useDispatch } from 'react-redux';
+import { showLoading, hideLoading } from '../redux/features/alertSlice';
+
 
 const Login = () => {
+  const dispatch = useDispatch();
   const onFinishHandeler = async(value) => {
     try {
+      dispatch(showLoading())
       const res = await axios.post('/api/v1/user/login', value)
+      dispatch(hideLoading())
       if(res.data.success) {
         localStorage.setItem('Token', res.data.token)
         message.success('Login Successfully')
@@ -16,9 +23,11 @@ const Login = () => {
         message.error(res.data.message)
       }
     } catch (error) {
+      dispatch(hideLoading())
       error.message('Something went wrong')
     }
-}
+  }
+
 const navigation = useNavigate();
   return (
     <>
