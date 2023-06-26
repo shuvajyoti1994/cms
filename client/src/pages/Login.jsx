@@ -10,13 +10,14 @@ import { showLoading, hideLoading } from '../redux/features/alertSlice';
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigate();
   const onFinishHandeler = async(value) => {
     try {
       dispatch(showLoading())
       const res = await axios.post('/api/v1/user/login', value)
       dispatch(hideLoading())
       if(res.data.success) {
-        localStorage.setItem('Token', res.data.token)
+        localStorage.setItem('token', res.data.token)
         message.success('Login Successfully')
         navigation('/')
       } else {
@@ -28,7 +29,6 @@ const Login = () => {
     }
   }
 
-const navigation = useNavigate();
   return (
     <>
       <div className="form-contener">
