@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { hideLoading, showLoading } from "../redux/features/alertSlice";
 import { setUser } from "../redux/features/userSlice";
 
-export default function ProtectedRoutes({ children }) {
+export default function ProtectedRoute({ children }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
@@ -31,7 +31,7 @@ export default function ProtectedRoutes({ children }) {
         <Navigate to="/login" />;
       }
     } catch (error) {
-      // localStorage.clear();
+      localStorage.clear();
       dispatch(hideLoading());
       console.log(error);
     }

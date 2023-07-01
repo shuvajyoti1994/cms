@@ -6,7 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { message } from "antd";
 const Layout = ({ children }) => {
-  const { user } = useSelector((state) => state.user);
+  const { user } = useSelector(state => state.user);
   const location = useLocation();
   const navigate = useNavigate();
   // logout funtion
@@ -24,15 +24,15 @@ const Layout = ({ children }) => {
         <div className="layout">
           <div className="sidebar">
             <div className="logo">
-              <h6>DOC APP</h6>
+              <h6>CMS</h6>
               <hr />
             </div>
             <div className="menu">
-              {SidebarMenu.map((menu) => {
+              {SidebarMenu.map((menu, index) => {
                 const isActive = location.pathname === menu.path;
                 return (
                   <>
-                    <div className={`menu-item ${isActive && "active"}`}>
+                    <div key={index} className={`menu-item ${isActive && "active"}`}>
                       <i className={menu.icon}></i>
                       <Link to={menu.path}>{menu.name}</Link>
                     </div>
@@ -48,7 +48,7 @@ const Layout = ({ children }) => {
           <div className="content">
             <div className="header">
               <div className="header-content">
-                <i class="fa-solid fa-bell"></i>
+                <i className="fa-solid fa-bell"></i>
                 <Link to="/profile">{user?.name}</Link>
               </div>
             </div>

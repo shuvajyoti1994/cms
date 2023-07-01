@@ -42,15 +42,13 @@ const loginController = async(req, res) => {
 
 const authController = async(req, res) =>{
     try {
-        const user = await userModel.findOne({_id: req.body.userId})
+        const user = await userModel.findById({_id: req.body.userId})
         if(!user) {
             return res.status(200).send({message: 'user not found', success: false})
         } else {
             res.status(200).send({
-                data:{
-                    name:user.name,
-                    email: user.email
-                }
+                data:user,
+                success:true
             })
         }
     } catch (error) {
