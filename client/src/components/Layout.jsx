@@ -31,12 +31,10 @@ const Layout = ({ children }) => {
               {SidebarMenu.map((menu, index) => {
                 const isActive = location.pathname === menu.path;
                 return (
-                  <>
                     <div key={index} className={`menu-item ${isActive && "active"}`}>
                       <i className={menu.icon}></i>
                       <Link to={menu.path}>{menu.name}</Link>
-                    </div>
-                  </>
+                    </div>    
                 );
               })}
               <div className={`menu-item `} onClick={handleLogout}>
