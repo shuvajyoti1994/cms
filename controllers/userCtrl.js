@@ -66,8 +66,18 @@ const applyDoctorController = async (req, res) => {
         const notification = adminUser.notification;
         notification.push({
             type: 'apply-doctor-request',
-            message: `${newDoctor.firstName} ${newDoctor.lastName} has applied for doctor account`
+            message: `${newDoctor.firstName} ${newDoctor.lastName} has applied for doctor account`,
+            data:{
+                doctorId: newDoctor._id,
+                name: newDoctor.firstName + " "+ newDoctor.lastName,
+                onClickPath: '/admin/doctors'
+            }
         })
+        await userModel.findByIdAndUpdate(adminUser._id, {notification});
+        res.status(201).send({
+            success: true,
+            message: "Doctor Account Applied SUccessfully",
+          });
     } catch (error) {
         console.log(error);
         res.status(500).send({
