@@ -88,9 +88,32 @@ const applyDoctorController = async (req, res) => {
     }
 }
 
+//Notification ctrl
+const getAllNotificationController = async(req, res) => {
+    try {
+        const user = await userModel.findOne({_id: req.body.userId});
+        const seenNotification = user.seennotification;
+        const notification = user.notification;
+        seenNotification.push(...notification);
+        user.notification = [];
+        user.seennotification = notification;
+        const updateUser = await user.save();
+        res.status(200).send({
+            data: updateUser,
+            message: "All notification marked as read",
+            success: true
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({message:"Error in notification", success: false, error})
+    }
+}
+
 module.exports = {
     loginController,
     registerController,
     authController,
-    applyDoctorController
+    applyDoctorController,
+    getAllNotificationController
 };
