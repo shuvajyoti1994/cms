@@ -20,7 +20,7 @@ const getAllUsersController = async(req, res) => {
     }
 }
 
-const getAllDoctorsController = async() => {
+const getAllDoctorsController = async(req, res) => {
     try {
         const doctors = await doctorModel.find({});
         res.status(200).send({

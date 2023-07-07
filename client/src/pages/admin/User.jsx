@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, Table } from 'antd';
 import React, {useState, useEffect} from 'react'
 import Layout from '../../components/Layout'
 import axios from 'axios'
@@ -9,13 +9,13 @@ const User = () => {
   // get users
   const getUsers = async() => {
     try {
-      const res = axios.get('/api/v1/admin/getAllUsers', {
+      const res = await axios.get('/api/v1/admin/getAllUsers', {
         headers:{
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
-      if((await res).data.success) {
-        setUsers((await res).data.data)
+      if(res.data.success) {
+        setUsers(res.data.data)
       }
     } catch (error) {
       message.error(`Can't Fetch User ${error}`)
@@ -38,8 +38,11 @@ const User = () => {
       dataIndex: 'email'
     },
     {
-      title: 'Created At',
-      dataIndex: 'createdAt'
+      title: 'Doctor',
+      dataIndex: 'isDoctor',
+      render: (test, record) =>(
+        <span>{record.isDoctor ? "Yes":"No"}</span>
+      )
     },
     {
       title:'Actions',
@@ -53,7 +56,8 @@ const User = () => {
   ]
   return (
     <Layout>
-        <h4>All User</h4>
+        <h3>All User List</h3>
+        <Table columns={columns} dataSource={users} key={users._id} />
     </Layout>
   )
 }

@@ -25,7 +25,7 @@ const Login = () => {
       }
     } catch (error) {
       dispatch(hideLoading())
-      error.message('Something went wrong')
+      message.error('Something went wrong')
     }
   }
 
