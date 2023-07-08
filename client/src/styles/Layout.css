@@ -76,11 +76,10 @@
     align-items: center;
     justify-content: flex-end;
     height: 40px;
-
 }
 
 .header-content i{
-    margin-right: 1px;
+    margin-right: 2px;
     font-size: 1.2rem;
     color: rgba(17, 91, 183, 0.825);
 }
