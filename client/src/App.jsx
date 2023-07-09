@@ -10,6 +10,7 @@ import ApplyDoctor from './pages/ApplyDoctor';
 import NotificationPage from './pages/NotificationPage';
 import User from './pages/admin/User';
 import Doctor from './pages/admin/Doctor';
+import Profile from './pages/doctor/Profile';
 
 const App = () => {
   const {loading} = useSelector(state => state.alerts)
@@ -41,6 +42,11 @@ const App = () => {
               <Route path='/admin/users' element={
               <ProtectedRoutes>
                 <User />
+              </ProtectedRoutes>} />
+
+              <Route path='/doctor/profile/:id' element={
+              <ProtectedRoutes>
+                <Profile />
               </ProtectedRoutes>} />
 
             <Route path='/login' element={
