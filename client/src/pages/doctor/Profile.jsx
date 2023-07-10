@@ -1,141 +1,197 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import Layout from '../../components/Layout'
-import axios from 'axios'
-import { Col, Form, Input, message, Row, TimePicker } from 'antd'
-import { useNavigate, useParams } from 'react-router-dom'
-import TextArea from 'antd/es/input/TextArea'
-import {showLoading, hideLoading } from '../../redux/features/alertSlice'
+import React, { useEffect, useState } from "react";
+import Layout from "./../../components/Layout";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { Col, Form, Input, Row, TimePicker, message } from "antd";
+import { useSelector, useDispatch } from "react-redux";
+import { showLoading, hideLoading } from "../../redux/features/alertSlice";
+import moment from "moment";
 
 const Profile = () => {
-  const {user} = useSelector(state => state.user);
+  const { user } = useSelector((state) => state.user);
   const [doctor, setDoctor] = useState(null);
-  const params = useParams()
   const dispatch = useDispatch();
-  const navigation = useNavigate();
-
-  // get doctor detail
-  const getDoctorInfo = async() => {
-    try {
-      const res = await axios.post('/api/v1/doctor/getDoctorInfo',{userId:params.id},
-      {
-        headers:{
-          Authorization:`Bearer ${localStorage.getItem('token')}`
-        }
-      })
-      if(res.data.success) {
-        setDoctor(res.data.data)
-        message.success(res.data.message)
-      }
-    } catch (error) {
-      console.log(error)
-      message.error('Something went wrong')
-    }
-  }
-
-  useEffect(() => {
-    getDoctorInfo();
-  },[])
-
+  const navigate = useNavigate();
+  const params = useParams();
+  // update doc ==========
+  //handle form
   const handleFinish = async (values) => {
     try {
-      dispatch(showLoading())
-      const res = await axios.post('/api/v1/doctor/updateProfile', {...values, userId:user._id},
-      {
-        headers:{
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+      dispatch(showLoading());
+      const res = await axios.post(
+        "/api/v1/doctor/updateProfile",
+        {
+          ...values,
+          userId: user._id,
+          timing: [
+            moment(values.timing[0]).format("HH:mm"),
+            moment(values.timing[1]).format("HH:mm"),
+          ],
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       dispatch(hideLoading());
-      if(res.data.success) {
-        message.success(res.data.message)
-        navigation('/')
-      } else{
-        message.error(res.data.message)
+      if (res.data.success) {
+        message.success(res.data.message);
+        navigate("/");
+      } else {
+        message.error(res.data.success);
+      }
+    } catch (error) {
+      dispatch(hideLoading());
+      console.log(error);
+      message.error("Somthing Went Wrrong ");
+    }
+  };
+  // update doc ==========
+
+  //getDOc Details
+  const getDoctorInfo = async () => {
+    try {
+      const res = await axios.post(
+        "/api/v1/doctor/getDoctorInfo",
+        { userId: params.id },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.data.success) {
+        setDoctor(res.data.data);
       }
     } catch (error) {
       console.log(error);
-      dispatch(hideLoading());
-      message.error('Somthing went wrong')
     }
-  }
+  };
+
+  useEffect(() => {
+    getDoctorInfo();
+    //eslint-disable-next-line
+  }, []);
   return (
     <Layout>
-        <h1 className='text-center mb-5'>Manage Profile</h1>
-        {doctor && (
-          <Form layout='vertical' onFinish={handleFinish} className='m-3'>
-          <h4 className="">Personal Details</h4>
+      <h1>Manage Profile</h1>
+      {doctor && (
+        <Form
+          layout="vertical"
+          onFinish={handleFinish}
+          className="m-3"
+          initialValues={{
+            ...doctor,
+            timing: [
+              moment(doctor.timing[0], "HH:mm"),
+              moment(doctor.timing[1], "HH:mm"),
+            ],
+          }}
+        >
+          <h4 className="">Personal Details : </h4>
           <Row gutter={20}>
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="First Name" name="firstName" >
-                <Input type='text' placeholder='Enter your first name' />
+              <Form.Item
+                label="First Name"
+                name="firstName"
+                required
+                rules={[{ required: true }]}
+              >
+                <Input type="text" placeholder="your first name" />
               </Form.Item>
             </Col>
-  
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Last Name" name="lastName" >
-                <Input type='text' placeholder='Enter your last name' />
+              <Form.Item
+                label="Last Name"
+                name="lastName"
+                required
+                rules={[{ required: true }]}
+              >
+                <Input type="text" placeholder="your last name" />
               </Form.Item>
             </Col>
-  
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Phone No" name="phone" >
-                <Input type='text' placeholder='Enter your phone no' />
+              <Form.Item
+                label="Phone No"
+                name="phone"
+                required
+                rules={[{ required: true }]}
+              >
+                <Input type="text" placeholder="your contact no" />
               </Form.Item>
             </Col>
-  
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Email" name="email" >
-                <Input type='text' placeholder='Enter your email' />
+              <Form.Item
+                label="Email"
+                name="email"
+                required
+                rules={[{ required: true }]}
+              >
+                <Input type="email" placeholder="your email address" />
               </Form.Item>
             </Col>
-  
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Website" name="website" >
-                <Input type='text' placeholder='Enter your website url' />
+              <Form.Item label="Website" name="website">
+                <Input type="text" placeholder="your website" />
               </Form.Item>
             </Col>
-  
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Address" name="address" >
-                <TextArea type='text' placeholder='Enter your address' />
+              <Form.Item
+                label="Address"
+                name="address"
+                required
+                rules={[{ required: true }]}
+              >
+                <Input type="text" placeholder="your clinic address" />
               </Form.Item>
             </Col>
           </Row>
-  
-          <h4 className="">Professional Details</h4>
+          <h4>Professional Details :</h4>
           <Row gutter={20}>
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Specialization" name="specialization" >
-                <Input type='text' placeholder='Enter your specialization' />
+              <Form.Item
+                label="Specialization"
+                name="specialization"
+                required
+                rules={[{ required: true }]}
+              >
+                <Input type="text" placeholder="your specialization" />
               </Form.Item>
             </Col>
-  
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Experience" name="experience" >
-                <Input type='text' placeholder='Enter your experience' />
+              <Form.Item
+                label="Experience"
+                name="experience"
+                required
+                rules={[{ required: true }]}
+              >
+                <Input type="text" placeholder="your experience" />
               </Form.Item>
             </Col>
-  
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Fees" name="fees" >
-                <Input type='number' placeholder='Enter your fees' />
+              <Form.Item
+                label="Fees"
+                name="fees"
+                required
+                rules={[{ required: true }]}
+              >
+                <Input type="text" placeholder="your contact no" />
               </Form.Item>
             </Col>
-  
             <Col xs={24} md={24} lg={8}>
-              <Form.Item label="Timing" name="timing" >
-                <TimePicker.RangePicker format="HH-mm" rules={[{require:true}]}/>
+              <Form.Item label="Timing" name="timing" required>
+                <TimePicker.RangePicker format="HH:mm" />
               </Form.Item>
             </Col>
           </Row>
-          <div className="d-flex justify-content-end">
-            <button className='btn btn-primary' type='submit'>Submit</button>
-          </div>
+              <div className="d-flex justify-content-end mb-5"> 
+              <button className="btn btn-primary" type="submit">Update</button>
+              </div>
         </Form>
-        )}
+      )}
     </Layout>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;
