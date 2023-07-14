@@ -38,7 +38,50 @@ const BookingPage = () => {
     // -----Booking Appointment-------
     const handleBooking = async() => {
         try {
-            
+            dispatch(showLoading());
+            const res = axios.post('/api/v1/user/book-appointment',
+                {
+                    doctorId: params.doctorId,
+                    userId: user._id,
+                    doctorInfo: doctors,
+                    userInfo: user,
+                    date: date,
+                    time: time
+                },
+                {
+                    headers:{
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+        )
+        dispatch(hideLoading());
+        if((await res).data.success) {
+            message.success((await res).data.message);
+        }
+        } catch (error) {
+            dispatch(hideLoading())
+            console.log(error)
+        }
+    }
+
+// Check Booking Appointment Availibality
+    const handleAvailability = async() => {
+        try {
+            dispatch(showLoading());
+            const res = await axios.post('/api/v1/user/book-availability',
+            {doctorId: params.doctorId, date, time},
+            {
+                headers:{
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+            dispatch(hideLoading());
+            if(res.data.success) {
+                setIsAvailable(true);
+                message.success(res.data.message)
+            } else {
+                message.error(res.data.message)
+            }
         } catch (error) {
             dispatch(hideLoading())
             console.log(error)
@@ -51,7 +94,7 @@ const BookingPage = () => {
     }, []);
     return (
         <Layout>
-            <h3>Booking Page</h3>
+            <h3 className="text-center mb-5">Booking Page</h3>
             <div className="container m-2">
                 {doctors && (
                     <div>
@@ -66,12 +109,9 @@ const BookingPage = () => {
                         <div className="d-flex flex-column w-50">
                             <DatePicker format='DD-MM-YYYY' className="m-2"
                                 onChange={(value) => setDate(moment(value).format('DD-MM-YYYY'))} />
-                            <TimePicker.RangePicker format='HH:mm' className="m-2"
-                                onChange={(value) => setTime([
-                                    moment(value[0]).format('HH:mm'),
-                                    moment(value[1]).format('HH:mm')
-                                ])} />
-                            <button className="btn btn-primary m-2">
+                            <TimePicker format='HH:mm' className="m-2"
+                                onChange={(value) => setTime(moment(value).format('HH:mm'))} />
+                            <button className="btn btn-primary m-2" onClick={handleAvailability}>
                                 Check Availability
                             </button>
                             <button className="btn btn-secondary m-2" onClick={handleBooking}>
